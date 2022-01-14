@@ -6,6 +6,11 @@ let paymentSchema = new mongoose.Schema({
     },
     userID: {
         type: String
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'success', 'fail'],
+        default: 'pending'
     }
 });
 const paymentDB = mongoose.model('paymentDB', paymentSchema);
