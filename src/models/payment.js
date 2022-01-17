@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-let paymentSchema = new mongoose.Schema({
+const paymentSchema = new mongoose.Schema({
     paymentID: {
         type: String
     },

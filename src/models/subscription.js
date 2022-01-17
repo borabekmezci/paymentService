@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-let subscriptionSchema = new mongoose.Schema({
+const subscriptionSchema = new mongoose.Schema({
     userID: {
         type: String
     },

@@ -17,33 +17,41 @@ route.post('/firstPayment/:userID',
         }
 
 
-        let price = req.body.price;
+        const price = req.body.price;
         //for test purposes
         console.log('Price is : ', price);
-        let filter = {
+        const filter = {
             userID: req.params.userID
         };
-        let update = {
-            "$set": {
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                cardNumber: req.body.cardNumber,
-                cardBinNumber: req.body.cardBinNumber,
-                cardExpirationMonth: req.body.cardExpirationMonth,
-                cardExpirationYear: req.body.cardExpirationYear,
-                cardCVC: req.body.cardCVC
-            }
+        const update = {
+
+            cardHolderName: req.body.cardHolderName,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            cardNumber: req.body.cardNumber,
+            cardBinNumber: req.body.cardBinNumber,
+            cardExpirationMonth: req.body.cardExpirationMonth,
+            cardExpirationYear: req.body.cardExpirationYear,
+            cardCVC: req.body.cardCVC
+
         }
+
+
+
         userDB.findOneAndUpdate(filter, update, {
             new: true
         }, (err, user) => {
             if (err) {
                 console.log(err)
+                res.status(500);
+                res.send("Error Has Occured");
             } else {
-                res.json(user); //for test purposes!!
+                const result = makePayment(price, user);
+                console.log(result);
+                res.json({ user }); //for test purposes!!
                 console.log('User Card Created!');
-                makePayment(price);
-            }
+
+            } //make promise here??
 
         });
 
