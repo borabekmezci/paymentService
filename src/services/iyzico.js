@@ -47,14 +47,14 @@ const makePayment = (price, user) => {
                 zipCode: '34732'
             },
             shippingAddress: {
-                contactName: 'Jane Doe',
+                contactName: user.cardHolderName,
                 city: 'Istanbul',
                 country: 'Turkey',
                 address: 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1',
                 zipCode: '34742'
             },
             billingAddress: {
-                contactName: 'Jane Doe',
+                contactName: user.cardHolderName,
                 city: 'Istanbul',
                 country: 'Turkey',
                 address: 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1',
@@ -74,8 +74,6 @@ const makePayment = (price, user) => {
             if (err) {
                 reject(err);
             } else {
-                console.log("iyzipay response : ");
-                console.log(result);
                 resolve(result);
             }
         });

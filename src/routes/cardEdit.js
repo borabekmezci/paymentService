@@ -2,8 +2,8 @@ const express = require('express');
 const route = express.Router();
 const userDB = require('../models/user');
 
-route.post('/card/edit/:userID', (req, res) => {
-    const filter = { userID: req.params.userID };
+route.post('/card/edit', async(req, res) => {
+    const filter = { userID: req.body.userID };
     const update = {
 
         cardNumber: req.body.cardNumber,
@@ -13,16 +13,12 @@ route.post('/card/edit/:userID', (req, res) => {
         cardCVC: req.body.cardCVC
 
     }
-    userDB.findOneAndUpdate(filter, update, { new: true }, (err, user) => {
-        if (err) {
-            console.log(err)
-        } else {
-            res.json(user); //for test purposes!
-            console.log('User Informations Updated!!!');
-        }
-
-    });
-
+    try {
+        const updatedUser = await userDB.findOneAndUpdate(filter, update, { new: true });
+        res.json(updatedUser);
+    } catch (error) {
+        res.send('There has been an error with updating the user with user id : ' + filter);
+    }
 });
 
 module.exports = route;
