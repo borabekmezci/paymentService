@@ -17,7 +17,7 @@ route.post('/card/edit', async(req, res) => {
         const updatedUser = await userDB.findOneAndUpdate(filter, update, { new: true });
         res.json(updatedUser);
     } catch (error) {
-        res.send('There has been an error with updating the user with user id : ' + filter);
+        res.json({ error: 'Error has been occured while updating user!' });
     }
 });
 

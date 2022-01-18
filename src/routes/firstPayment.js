@@ -4,6 +4,7 @@ const userDB = require('../models/user');
 const paymentDB = require('../models/payment');
 const { check, validationResult } = require('express-validator');
 const makePayment = require('../services/iyzico');
+const { db } = require('../models/user');
 
 //first payment of existing user!
 route.post('/firstPayment/',
@@ -19,8 +20,6 @@ route.post('/firstPayment/',
 
 
         const price = req.body.price;
-        //for test purposes
-        console.log('Price is : ', price);
         const filter = {
             userID: req.body.userID
         };
@@ -38,7 +37,7 @@ route.post('/firstPayment/',
                 cardExpirationYear: req.body.cardExpirationYear,
                 cardCVC: req.body.cardCVC
             }
-            //!!for creating user card informaitions!!
+            //!!for creating user card informations!!
         const update = {
             cardNumber: req.body.cardNumber,
             cardBinNumber: req.body.cardBinNumber,
@@ -52,29 +51,19 @@ route.post('/firstPayment/',
             const iyzicoResult = await makePayment(price, user);
             if (iyzicoResult.status === 'success') {
                 const updatedUser = await userDB.findOneAndUpdate(filter, update, { new: true });
-
-                const paymentInfo = {
-                    paymentID: iyzicoResult.paymentId,
-                    status: iyzicoResult.status
-                }
-                const payment = await paymentDB.findOneAndUpdate(filter, paymentInfo, { new: true });
-
-                res.json({ payment, updatedUser });
-            } else {
-                const paymentInfo = {
-                    paymentID: iyzicoResult.paymentId,
-                    status: iyzicoResult.status
-                }
-                const payment = await paymentDB.findOneAndUpdate(filter, paymentInfo, { new: true });
-                console.log('Fail Payment : ', payment);
-                res.json({ paymentResult, payment });
             }
+            const paymentDBInfo = {
+                paymentID: iyzicoResult.paymentId,
+                userID: req.body.userID,
+                status: iyzicoResult.status
+            }
+            const payment = await paymentDB(paymentDBInfo);
+            db.collection('paymentdbs').insertOne(payment);
+            res.json({ iyzicoResult });
+
         } catch (error) {
-            res.send("There has been an error!");
+            res.json({ error: 'There has been an Error!!' });
         }
-
-
-
     });
 
 module.exports = route;

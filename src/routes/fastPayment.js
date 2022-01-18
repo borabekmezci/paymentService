@@ -4,6 +4,7 @@ const userDB = require('../models/user');
 const paymentDB = require('../models/payment');
 const { check, validationResult } = require('express-validator');
 const makePayment = require('../services/iyzico');
+const { db } = require('../models/user');
 
 //payment of existing user!!
 route.post('/fastPayment',
@@ -23,19 +24,16 @@ route.post('/fastPayment',
 
         try {
             const iyzicoResult = await makePayment(price, user);
-            const paymentInfo = {
+            const paymentDBInfo = {
                 paymentID: iyzicoResult.paymentId,
+                userID: req.body.userID,
                 status: iyzicoResult.status
             }
-            if (iyzicoResult.status === 'success') {
-                const payment = await paymentDB.findOneAndUpdate(filter, paymentInfo, { new: true });
-                res.json({ payment });
-            } else {
-                const payment = await paymentDB.findOneAndUpdate(filter, paymentInfo, { new: true });
-                res.json({ payment, iyzicoResult });
-            }
+            const payment = await paymentDB(paymentDBInfo);
+            db.collection('paymentdbs').insertOne(payment);
+            res.json({ iyzicoResult });
         } catch (error) {
-            res.send("There has been an error!");
+            res.json({ error: 'There has been an Error!!' });
         }
 
     });
