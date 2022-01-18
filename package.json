@@ -4,7 +4,9 @@
     "description": "payment system",
     "main": "app.js",
     "scripts": {
-        "start": "nodemon src/app.js"
+        "start": "nodemon src/app.js",
+        "test": "jest",
+        "test:watch": "jest --watch"
     },
     "author": "mehmetunubol-borabekmezci",
     "license": "ISC",
@@ -15,5 +17,10 @@
         "iyzipay": "^2.0.48",
         "mongoose": "^6.1.6",
         "nodemon": "^2.0.15"
+    },
+    "devDependencies": {
+        "jest": "^27.4.7",
+        "mongodb-memory-server": "^8.2.0",
+        "supertest": "^6.2.1"
     }
 }
