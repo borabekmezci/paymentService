@@ -15,7 +15,9 @@ const unitTestHelper = {
   },
   stop: async () => {
     await mongo.stop();
-    await mongoose.connection.close();
+    if(mongoose.connection.readyState === 1){
+        await mongoose.connection.close();
+    }    
   },
   clear: async () => {
     // Delete all existing collections, it is not needed for now.
