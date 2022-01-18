@@ -1,13 +1,15 @@
 const express = require('express');
 const route = express.Router();
 const userDB = require('../models/user');
+const paymentDB = require('../models/payment');
 const { check, validationResult } = require('express-validator');
 const makePayment = require('../services/iyzico');
+const { db } = require('../models/user');
 
 //payment of existing user!!
 route.post('/fastPayment',
     check('price').notEmpty(),
-    (req, res) => {
+    async(req, res) => {
 
         const error = validationResult(req);
         console.log(error);
@@ -15,18 +17,24 @@ route.post('/fastPayment',
             return res.status(400).json({ error: error.array() });
         }
 
-        let price = req.body.price;
-        let filter = { userID: req.body.userID };
-        userDB.findOne(filter, (err, user) => {
-            if (err) {
-                console.log(err);
-                res.status(500);
-                res.send("Error Has Occured");
-            } else {
-                makePayment(price);
-                res.send(); //for test purposes
+        const price = req.body.price;
+        const filter = { userID: req.body.userID };
+
+        const user = await userDB.findOne(filter);
+
+        try {
+            const iyzicoResult = await makePayment(price, user);
+            const paymentDBInfo = {
+                paymentID: iyzicoResult.paymentId,
+                userID: req.body.userID,
+                status: iyzicoResult.status
             }
-        })
+            const payment = await paymentDB(paymentDBInfo);
+            db.collection('paymentdbs').insertOne(payment);
+            res.json({ iyzicoResult });
+        } catch (error) {
+            res.json({ error: 'There has been an Error!!' });
+        }
 
     });
 
