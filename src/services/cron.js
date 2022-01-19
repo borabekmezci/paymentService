@@ -3,7 +3,6 @@ const dotenv = require("dotenv")
 const userDB = require('../models/user');
 const paymentDB = require('../models/payment');
 const subscriptionDB = require('../models/subscription');
-const { db } = require('../models/user');
 const makePayment = require("./iyzico");
 
 dotenv.config({
@@ -14,7 +13,7 @@ const price = process.env.PRICE;
 
 const scheduleSubscriptionPayment = () => {
   // Every day at 00:00:00
-  cron.schedule("0 0 0 * * *", async() => {//checking every minute for test purpose!
+  cron.schedule("0 0 0 * * *", async() => {
     console.log("Running a task every day, date:", new Date());
 
     const subscriptions = await subscriptionDB.find({nextDate : {$lt : new Date()}});
