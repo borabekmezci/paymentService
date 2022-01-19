@@ -7,7 +7,7 @@ const subscriptionSchema = new mongoose.Schema({
     interval: {
         type: Number
     },
-    lastDate: {
+    nextDate: {
         type: Date
     }
 });
