@@ -27,11 +27,11 @@ beforeAll(async () => {
     cardHolderName: "fail fail",
     firstName: "fail",
     lastName: "fail",
-    ccardNumber: null,
-    cardBinNumber: null,
-    cardExpirationMonth: null,
-    cardExpirationYear: null,
-    cardCVC: null,
+    cardNumber: "4111111111111129",
+    cardBinNumber: "411111",
+    cardExpirationMonth: "12",
+    cardExpirationYear: "2022",
+    cardCVC: "555"
   });
   userDB.create();
 });
@@ -63,9 +63,8 @@ it("payment done successfully", async () => {
   }
 
   const response = await request(app).post("/firstPayment").send(reqBody).expect(200);
-  console.log('FOR SUCCESS ==>',response.body);
+  
   let updateResponse = await userDB.findOneAndUpdate({userID : userID1}, update);
-  console.log('FOR SUCCESS ==>',updateResponse);
   let dbRecord = await paymentDB.findOne({ userID:'1234567' });
   return expect(dbRecord.status).toEqual('success');
 });
@@ -79,18 +78,8 @@ it("payment done successfully!!FAILLLL", async () => {
         cardExpirationYear: "2022",
         cardCVC: "555", 
     };
-    const update = {
-        cardNumber: "4111111111111129",
-        cardBinNumber: "411111",
-        cardExpirationMonth: "12",
-        cardExpirationYear: "2022",
-        cardCVC: "555",
-        
-    }
-    const response = await request(app).post("/fastPayment").send(reqBody).expect(200);
-    console.log('FOR FAILLL ==>',response.body);
-    let updateResponse = await userDB.findOneAndUpdate({userID : userID2}, update);
-    console.log('FOR FAILLL ==>',updateResponse);
+    const response = await request(app).post("/firstPayment").send(reqBody).expect(200);
+    console.log(response.status);
     let dbRecord = await paymentDB.findOne({ userID : userID2 });
     return expect(dbRecord.status).toEqual('failure');
   });
