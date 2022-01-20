@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
-let userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     userID: {
+        type: String
+    },
+    cardHolderName: {
         type: String
     },
     firstName: {
